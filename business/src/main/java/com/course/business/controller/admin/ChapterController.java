@@ -18,15 +18,15 @@ import java.util.List;
  * @CreateDate: 2020/10/28$ 20:40$
  */
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/chapter")
 public class ChapterController {
 
 
     @Autowired
     private ChapterService chapterService;
 
-    @RequestMapping("/chapter")
-    public List<ChapterDto> chapter(){
+    @RequestMapping("/list")
+    public List<ChapterDto> list(){
         return chapterService.list();
     }
 }
