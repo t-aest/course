@@ -1,6 +1,11 @@
 <template>
     <div>
         <p>
+            <button v-on:click="add()" class="btn btn-white btn-default btn-round">
+                <i class="ace-icon fa fa-edit"></i>
+                新增
+            </button>
+            &nbsp;
             <button v-on:click="list(1)" class="btn btn-white btn-default btn-round">
                 <i class="ace-icon fa fa-refresh"></i>
                 刷新
@@ -23,61 +28,49 @@
             <td>{{chapter.courseId}}</td>
             <td>
                 <div class="hidden-sm hidden-xs btn-group">
-                    <button class="btn btn-xs btn-success">
-                        <i class="ace-icon fa fa-check bigger-120"></i>
-                    </button>
-
-                    <button class="btn btn-xs btn-info">
+                    <button @click="edit(chapter)" class="btn btn-xs btn-info">
                         <i class="ace-icon fa fa-pencil bigger-120"></i>
                     </button>
-
-                    <button class="btn btn-xs btn-danger">
+                    <button @click="del(chapter.id)" class="btn btn-xs btn-danger">
                         <i class="ace-icon fa fa-trash-o bigger-120"></i>
                     </button>
-
-                    <button class="btn btn-xs btn-warning">
-                        <i class="ace-icon fa fa-flag bigger-120"></i>
-                    </button>
-                </div>
-
-                <div class="hidden-md hidden-lg">
-                    <div class="inline pos-rel">
-                        <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown"
-                                data-position="auto">
-                            <i class="ace-icon fa fa-cog icon-only bigger-110"></i>
-                        </button>
-
-                        <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                            <li>
-                                <a href="#" class="tooltip-info" data-rel="tooltip" title="View">
-																			<span class="blue">
-																				<i class="ace-icon fa fa-search-plus bigger-120"></i>
-																			</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-																			<span class="green">
-																				<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-																			</span>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-																			<span class="red">
-																				<i class="ace-icon fa fa-trash-o bigger-120"></i>
-																			</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </td>
         </tr>
         </tbody>
     </table>
+
+        <div id="form-modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">表单</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">名称</label>
+                                <div class="col-sm-10">
+                                    <input v-model="chapter.name" class="form-control" placeholder="名称">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">课程ID</label>
+                                <div class="col-sm-10">
+                                    <input v-model="chapter.courseId" class="form-control" placeholder="课程ID">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button @click="save()" type="button" class="btn btn-primary">保存</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     </div>
 </template>
 <script>
@@ -87,7 +80,8 @@
         components: {Pagination},
         data: function() {
             return{
-              chapters: []
+                chapter: {},
+                chapters: []
             }
         },
         mounted: function () {
@@ -96,16 +90,75 @@
             self.list(1);
         },
         methods: {
+            add() {
+                let self = this;
+                self.chapter = {};
+                $("#form-modal").modal("show")
+            },
+            edit(chapter) {
+                let self = this;
+                self.chapter = $.extend({},chapter);
+                $("#form-modal").modal("show")
+            },
+            /**
+             * 列表查询
+             * @param page
+             */
             list(page) {
                 let self = this;
-                self.$ajax.post('http://127.0.0.1:9000/business/admin/chapter/list',{
-                    page:page,
-                    size:self.$refs.pagination.size,
-                }).then((response)=>{
-                    console.log("查询大章列表：",response);
-                    self.chapters = response.data.list;
-                    self.$refs.pagination.render(page,response.data.total)
-            })
+                Loading.show();
+                self.$ajax.post('http://127.0.0.1:9000/business/admin/chapter/list', {
+                    page: page,
+                    size: self.$refs.pagination.size,
+                }).then((response) => {
+                    Loading.hide();
+                    let res = response.data;
+                    self.chapters = res.content.list;
+                    self.$refs.pagination.render(page, res.content.total)
+                })
+            },
+            /**
+             * 点击 保存
+             * @param page
+             */
+            save(page) {
+                let self = this;
+                //保存校验
+                if (!Validator.require(self.chapter.name,"名称")
+                || !Validator.require(self.chapter.courseId,"课程ID")
+                || !Validator.length(self.chapter.courseId,"课程ID",1,8)){
+                    return;
+                }
+                Loading.show();
+                self.$ajax.post('http://127.0.0.1:9000/business/admin/chapter/save', self.chapter).then((response) => {
+                    Loading.hide();
+                    let res = response.data;
+                    if (res.success){
+                        $("#form-modal").modal("hide");
+                        self.list(1);
+                        Toast.success("保存成功！");
+                    }else {
+                        Toast.warning(res.message)
+                    }
+                })
+            },
+            /**
+             * 点击 删除
+             * @param page
+             */
+            del(id) {
+                let self = this;
+                Confirm.show("删除大章后不可恢复，确认删除?",function () {
+                    Loading.show();
+                    self.$ajax.delete('http://127.0.0.1:9000/business/admin/chapter/delete/'+id).then((response) => {
+                        Loading.hide();
+                        let res = response.data;
+                        if (res.success){
+                            self.list(1);
+                            Toast.success("删除成功！");
+                        }
+                    })
+                });
             }
         }
     }
