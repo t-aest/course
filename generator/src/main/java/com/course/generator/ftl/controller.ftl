@@ -1,4 +1,4 @@
-package com.course.business.controller.admin;
+package com.course.${module}.controller.admin;
 
 import com.course.server.domain.${Domain};
 import com.course.server.domain.Test;
@@ -29,7 +29,7 @@ public class ${Domain}Controller {
 
     private static final Logger Log = LoggerFactory.getLogger(${Domain}Controller.class);
 
-    public static final String BUSINESS_NAME = "大章";
+    public static final String BUSINESS_NAME = "${tableNameCn}";
 
     @Autowired
     private ${Domain}Service ${domain}Service;
