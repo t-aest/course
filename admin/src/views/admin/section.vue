@@ -15,17 +15,17 @@
         <table id="simple-table" class="table  table-bordered table-hover">
             <thead>
             <tr>
-                                <th>id</th>
-                <th>标题</th>
-                <th>课程</th>
-                <th>大章</th>
-                <th>视频</th>
-                <th>时长</th>
-                <th>收费</th>
-                <th>顺序</th>
-                <th>创建时间</th>
-                <th>修改时间</th>
-                <th>vod</th>
+            <th>id</th>
+            <th>标题</th>
+            <th>课程</th>
+            <th>大章</th>
+            <th>视频</th>
+            <th>时长</th>
+            <th>收费</th>
+            <th>顺序</th>
+            <th>创建时间</th>
+            <th>修改时间</th>
+            <th>vod</th>
             <th>操作</th>
             </tr>
             </thead>
@@ -193,7 +193,14 @@
              */
             save(page) {
                 let self = this;
-                //保存校验
+                // 保存校验
+                if (1 != 1
+                    || !Validator.require(self.section.title, "标题")
+                    || !Validator.length(self.section.title, "标题", 1, 50)
+                    || !Validator.length(self.section.video, "视频", 1, 200)
+                ) {
+                    return;
+                }
                 Loading.show();
                 self.$ajax.post(process.env.VUE_APP_SERVER + '/business/admin/section/save', self.section).then((response) => {
                     Loading.hide();

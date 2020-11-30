@@ -117,12 +117,21 @@
              */
             save(page) {
                 let self = this;
-                //保存校验
-                <#--if (!Validator.require(self.${domain}.name,"名称")-->
-                    <#--|| !Validator.require(self.${domain}.courseId,"课程ID")-->
-                    <#--|| !Validator.length(self.${domain}.courseId,"课程ID",1,8)){-->
-                    <#--return;-->
-                <#--}-->
+                // 保存校验
+                if (1 != 1
+                    <#list fieldList as field>
+                    <#if field.name!="id" && field.nameHump!="createdAt" && field.nameHump!="updatedAt" && field.nameHump!="sort">
+                    <#if !field.nullAble>
+                    || !Validator.require(self.${domain}.${field.nameHump}, "${field.nameCn}")
+                    </#if>
+                    <#if (field.length > 0)>
+                    || !Validator.length(self.${domain}.${field.nameHump}, "${field.nameCn}", 1, ${field.length?c})
+                    </#if>
+                    </#if>
+                    </#list>
+                ) {
+                    return;
+                }
                 Loading.show();
                 self.$ajax.post(process.env.VUE_APP_SERVER + '/${module}/admin/${domain}/save', self.${domain}).then((response) => {
                     Loading.hide();
