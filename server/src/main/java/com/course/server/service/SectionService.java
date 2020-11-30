@@ -2,12 +2,9 @@ package com.course.server.service;
 
 import com.course.server.domain.Section;
 import com.course.server.domain.SectionExample;
-import com.course.server.domain.Test;
-import com.course.server.domain.TestExample;
 import com.course.server.dto.SectionDto;
 import com.course.server.dto.PageDto;
 import com.course.server.mapper.SectionMapper;
-import com.course.server.mapper.TestMapper;
 import com.course.server.util.CopyUtil;
 import com.course.server.util.UuidUtil;
 import com.github.pagehelper.PageHelper;
