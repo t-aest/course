@@ -94,10 +94,7 @@
         name: "${module}-${domain}",
         data: function () {
             return {
-            ${domain}:
-            {
-            }
-        ,
+            ${domain}:{},
             ${domain}s: [],
             <#list fieldList as field>
             <#if field.enums>
