@@ -63,9 +63,9 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">课程ID</label>
+                                <label class="col-sm-2 control-label">课程</label>
                                 <div class="col-sm-10">
-                                    <input v-model="chapter.courseId" class="form-control" placeholder="课程ID">
+                                    <p class="form-control-static">{{course.name}}</p>
                                 </div>
                             </div>
                         </form>
@@ -123,6 +123,7 @@
                 self.$ajax.post(process.env.VUE_APP_SERVER + '/business/admin/chapter/list', {
                     page: page,
                     size: self.$refs.pagination.size,
+                    courseId: self.course.id
                 }).then((response) => {
                     Loading.hide();
                     let res = response.data;
@@ -138,10 +139,10 @@
                 let self = this;
                 //保存校验
                 if (!Validator.require(self.chapter.name,"名称")
-                || !Validator.require(self.chapter.courseId,"课程ID")
                 || !Validator.length(self.chapter.courseId,"课程ID",1,8)){
                     return;
                 }
+                self.chapter.courseId = self.course.id
                 Loading.show();
                 self.$ajax.post(process.env.VUE_APP_SERVER + '/business/admin/chapter/save', self.chapter).then((response) => {
                     Loading.hide();
