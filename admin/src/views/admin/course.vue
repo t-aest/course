@@ -38,12 +38,17 @@
                             <span class="badge badge-info">排序：{{course.sort}}</span>
                             <span class="badge badge-info">时长：{{course.time}}</span>
                         </p>
-                        <p> <button v-on:click="edit(course)" class="btn btn-xs btn-info">
-                            <i class="ace-icon fa fa-pencil bigger-120"></i>
-                        </button>
-                            <button v-on:click="del(course.id)" class="btn btn-xs btn-danger">
-                                <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                            </button></p>
+                        <p>
+                            <button v-on:click="toChapter(course)" class="btn btn-white btn-xs btn-info btn-round">
+                                大章
+                            </button>
+                            <button v-on:click="edit(course)" class="btn btn-white btn-xs btn-info btn-round">
+                                编辑
+                            </button>
+                            <button v-on:click="del(course.id)" class="btn btn-white btn-xs btn-danger btn-round">
+                                删除
+                            </button>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -226,7 +231,6 @@
                 self.course = {};
                 $("#form-modal").modal("show");
             },
-
             /**
              * 点击【编辑】
              */
@@ -235,7 +239,6 @@
                 self.course = $.extend({}, course);
                 $("#form-modal").modal("show");
             },
-
             /**
              * 列表查询
              */
@@ -300,7 +303,16 @@
                         }
                     })
                 });
-            }
+            },
+            /**
+             * 点击【大章】
+             */
+            toChapter(course) {
+                let self = this;
+                SessionStorage.set("course",course);
+                self.$router.push("/business/chapter");
+            },
+
         }
     }
 </script>
