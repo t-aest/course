@@ -3,9 +3,9 @@
         <div class="row">
             <div class="col-md-6">
                 <p>
-                    <button v-on:click="add()" class="btn btn-white btn-default btn-round">
+                    <button v-on:click="add1()" class="btn btn-white btn-default btn-round">
                         <i class="ace-icon fa fa-edit"></i>
-                        新增
+                        新增一级
                     </button>
                     &nbsp;
                     <button v-on:click="all()" class="btn btn-white btn-default btn-round">
@@ -45,9 +45,9 @@
             </div>
             <div class="col-md-6">
                 <p>
-                    <button v-on:click="add()" class="btn btn-white btn-default btn-round">
+                    <button v-on:click="add2()" class="btn btn-white btn-default btn-round">
                         <i class="ace-icon fa fa-edit"></i>
-                        新增
+                        新增二级
                     </button>
                 </p>
                 <table id="level2-table" class="table  table-bordered table-hover">
@@ -94,9 +94,9 @@
                     <div class="modal-body">
                         <form class="form-horizontal">
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">父id</label>
+                                <label class="col-sm-2 control-label">父分类</label>
                                 <div class="col-sm-10">
-                                    <input v-model="category.parent" class="form-control">
+                                    <p class="form-control-static">{{active.name || "无"}}</p>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -145,11 +145,29 @@
         },
         methods: {
             /**
-             * 点击【新增】
+             * 点击【新增一级】
              */
-            add() {
+            add1() {
                 let self = this;
-                self.category = {};
+                self.active = {};
+                self.level2= [];
+                self.category = {
+                    parent: "00000000"
+                };
+                $("#form-modal").modal("show");
+            },
+            /**
+             * 点击【新增二级】
+             */
+            add2() {
+                let self = this;
+                if(Tool.isEmpty(self.active)){
+                    Toast.warning("请先选择一级分类");
+                    return;
+                }
+                self.category = {
+                    parent: self.active.id
+                };
                 $("#form-modal").modal("show");
             },
 
@@ -189,6 +207,12 @@
                             }
                         }
                     }
+                    self.level2 = [];
+                    // 对当前一级分类中选中的表格触发一次点击事件，以刷新二级菜单列表
+                    // 注意：界面的渲染需要等vue绑定好变量后才做，所以加延时100ms
+                    setTimeout(function () {
+                        $("tr.active").trigger("click");
+                    }, 100);
                 })
             },
 
