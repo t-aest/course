@@ -28,20 +28,25 @@ public class CategoryService {
     /**
      * 查询
      */
-    public void list(PageDto pageDto){
-        PageHelper.startPage(pageDto.getPage(),pageDto.getSize());
+    public List<CategoryDto> all(){
         CategoryExample categoryExample = new CategoryExample();
-         categoryExample.setOrderByClause("sort asc");
+        categoryExample.setOrderByClause("sort asc");
+        List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
+        List<CategoryDto> categoryDtoList = CopyUtil.copyList(categoryList, CategoryDto.class);
+        return categoryDtoList;
+    }
+
+    /**
+     * 查询
+     */
+    public void list(PageDto pageDto){
+        PageHelper.startPage(pageDto.getPage(), pageDto.getSize());
+        CategoryExample categoryExample = new CategoryExample();
+        categoryExample.setOrderByClause("sort asc");
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
         PageInfo<Category> pageInfo = new PageInfo<>(categoryList);
         pageDto.setTotal(pageInfo.getTotal());
-        List<CategoryDto> categoryDtoList = new ArrayList<>();
-        for (int i = 0; i < categoryList.size(); i++) {
-            Category category = categoryList.get(i);
-            CategoryDto categoryDto = new CategoryDto();
-            BeanUtils.copyProperties(category,categoryDto);
-            categoryDtoList.add(categoryDto);
-        }
+        List<CategoryDto> categoryDtoList = CopyUtil.copyList(categoryList, CategoryDto.class);
         pageDto.setList(categoryDtoList);
     }
 
