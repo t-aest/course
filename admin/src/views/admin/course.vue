@@ -219,6 +219,7 @@
                 COURSE_CHARGE: COURSE_CHARGE,
                 COURSE_STATUS: COURSE_STATUS,
                 categorys: [],
+                tree: {},
             }
         },
         mounted: function () {
@@ -237,6 +238,7 @@
             add() {
                 let self = this;
                 self.course = {};
+                self.tree.checkAllNodes(false);
                 $("#form-modal").modal("show");
             },
             /**
@@ -245,6 +247,7 @@
             edit(course) {
                 let self = this;
                 self.course = $.extend({}, course);
+                self.listCategory(course.id);
                 $("#form-modal").modal("show");
             },
             /**
@@ -280,6 +283,12 @@
                 ) {
                     return;
                 }
+                let categorys = self.tree.getCheckedNodes();
+                if (Tool.isEmpty(categorys)){
+                    Toast.warning("请选择分类！")
+                    return;
+                }
+                self.course.categorys = categorys;
 
                 Loading.show();
                 self.$ajax.post(process.env.VUE_APP_SERVER + '/business/admin/course/save', self.course).then((response) => {
@@ -349,9 +358,33 @@
                         }
                     }
                 };
-                let zNodes =self.categorys;
-                $.fn.zTree.init($("#tree"), setting, zNodes);
-                }
+                let zNodes = self.categorys;
+                self.tree = $.fn.zTree.init($("#tree"), setting, zNodes);
+
+                //展开所有的节点
+                self.tree.expandAll(true);
+            },
+            /**
+             * 查找课程下所有分类
+             * @param courseId
+             */
+            listCategory(courseId) {
+                let self = this;
+                Loading.show();
+                self.$ajax.post(process.env.VUE_APP_SERVER + '/business/admin/course/list-category/' + courseId).then((res)=>{
+                    Loading.hide();
+                    console.log("查找课程下所有分类结果：", res);
+                    let response = res.data;
+                    let categorys = response.content;
+
+                    // 勾选查询到的分类
+                    self.tree.checkAllNodes(false);
+                    for (let i = 0; i < categorys.length; i++) {
+                        let node = self.tree.getNodeByParam("id", categorys[i].categoryId);
+                        self.tree.checkNode(node, true);
+                    }
+                })
+            }
 
         }
     }

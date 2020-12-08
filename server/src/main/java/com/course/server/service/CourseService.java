@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -33,6 +34,9 @@ public class CourseService {
 
     @Resource
     private MyCourseMapper myCourseMapper;
+
+    @Resource
+    private CourseCategoryService courseCategoryService;
 
     /**
      * 查询
@@ -57,6 +61,7 @@ public class CourseService {
     /**
      * 保存  id为空则添加，反正修改
      */
+    @Transactional
     public void save(CourseDto courseDto){
         Course course = CopyUtil.copy(courseDto, Course.class);
         if(StringUtils.isEmpty(courseDto.getId())){
@@ -64,6 +69,9 @@ public class CourseService {
         }else {
             this.update(course);
         }
+
+        // 批量保存课程分类
+        courseCategoryService.saveBatch(course.getId(),courseDto.getCategorys());
     }
     /**
      * 添加
