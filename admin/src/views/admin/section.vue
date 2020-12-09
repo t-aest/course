@@ -151,8 +151,8 @@
         mounted: function () {
             let self = this;
             self.$refs.pagination.size = 5;
-            let course = SessionStorage.get("course") || {};
-            let chapter = SessionStorage.get("chapter") || {};
+            let course = SessionStorage.get(SESSION_KEY_COURSE) || {};
+            let chapter = SessionStorage.get(SESSION_KEY_CHAPTER) || {};
             if (Tool.isEmpty(course)|| Tool.isEmpty(chapter)){
                 self.$router.push("/welcome");
             }
@@ -160,7 +160,8 @@
             self.chapter = chapter;
             self.list(1);
             // sidebar激活样式方法一
-            // this.$parent.activeSidebar("business-section-sidebar");
+            this.$parent.activeSidebar("business-course-sidebar");
+
 
         },
         methods: {

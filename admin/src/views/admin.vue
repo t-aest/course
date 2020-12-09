@@ -418,22 +418,22 @@
 
                                 <b class="arrow"></b>
                             </li>
-                            <li class="active" id="business-chapter-sidebar">
-                                <router-link to="/business/chapter">
-                                    <i class="menu-icon fa fa-caret-right"></i>
-                                    大章管理
-                                </router-link>
+                            <!--<li class="active" id="business-chapter-sidebar">-->
+                                <!--<router-link to="/business/chapter">-->
+                                    <!--<i class="menu-icon fa fa-caret-right"></i>-->
+                                    <!--大章管理-->
+                                <!--</router-link>-->
 
-                                <b class="arrow"></b>
-                            </li>
-                            <li class="active" id="business-section-sidebar">
-                                <router-link to="/business/section">
-                                    <i class="menu-icon fa fa-caret-right"></i>
-                                    小节管理
-                                </router-link>
+                                <!--<b class="arrow"></b>-->
+                            <!--</li>-->
+                            <!--<li class="active" id="business-section-sidebar">-->
+                                <!--<router-link to="/business/section">-->
+                                    <!--<i class="menu-icon fa fa-caret-right"></i>-->
+                                    <!--小节管理-->
+                                <!--</router-link>-->
 
-                                <b class="arrow"></b>
-                            </li>
+                                <!--<b class="arrow"></b>-->
+                            <!--</li>-->
                         </ul>
                     </li>
 
@@ -508,10 +508,10 @@
                     // sidebar激活样式方法二
                     console.log("---->页面跳转：", val, oldVal);
                     let _this = this;
-                    if (!_this.hasResourceRouter(val.name)) {
-                        _this.$router.push("/login");
-                        return;
-                    }
+                    // if (!_this.hasResourceRouter(val.name)) {
+                    //     _this.$router.push("/login");
+                    //     return;
+                    // }
                     _this.$nextTick(function(){  //页面加载完成后执行
                         _this.activeSidebar(_this.$route.name.replace("/", "-") + "-sidebar");
                     })
@@ -540,6 +540,23 @@
                     parentLi.addClass("open active");
                 }
             },
+            /**
+             * 查找是否有权限
+             * @param router
+             */
+            hasResourceRouter(router) {
+                let _this = this;
+                let resources = Tool.getLoginUser().resources;
+                if (Tool.isEmpty(resources)) {
+                    return false;
+                }
+                for (let i = 0; i < resources.length; i++) {
+                    if (router === resources[i].page) {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
     }
 </script>

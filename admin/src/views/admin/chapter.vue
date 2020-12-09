@@ -100,12 +100,13 @@
         mounted: function () {
             let self = this;
             self.$refs.pagination.size = 5
-            let course = SessionStorage.get("course") || {};
+            let course = SessionStorage.get(SESSION_KEY_COURSE) || {};
             if (Tool.isEmpty(course)){
                 self.$router.push("/welcome");
             }
             self.course = course;
             self.list(1);
+            this.$parent.activeSidebar("business-course-sidebar");
         },
         methods: {
             add() {
