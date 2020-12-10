@@ -77,6 +77,11 @@ public class CourseDto {
 
     private List<CategoryDto> categorys;
 
+    /**
+     * 讲师|teacher.id
+     */
+    private String teacherId;
+
     @Override
     public String toString() {
         return "CourseDto{" +
@@ -106,10 +111,7 @@ public class CourseDto {
         this.categorys = categorys;
     }
 
-    /**
-     * 讲师|teacher.id
-     */
-    private String teacherId;
+
 
     public String getId() {
         return id;

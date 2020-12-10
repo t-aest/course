@@ -2,6 +2,7 @@ package com.course.business.controller.admin;
 
 import com.course.server.domain.Teacher;
 import com.course.server.domain.Test;
+import com.course.server.dto.CategoryDto;
 import com.course.server.dto.TeacherDto;
 import com.course.server.dto.PageDto;
 import com.course.server.dto.ResponseDto;
@@ -33,6 +34,17 @@ public class TeacherController {
 
     @Autowired
     private TeacherService teacherService;
+
+    /**
+     * 列表查询
+     */
+    @PostMapping("/all")
+    public ResponseDto all(){
+        ResponseDto responseDto = new ResponseDto();
+        List<TeacherDto> teacherDtoList = teacherService.all();
+        responseDto.setContent(teacherDtoList);
+        return responseDto;
+    }
 
     /**
      * 列表查询

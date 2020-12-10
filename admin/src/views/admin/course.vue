@@ -29,6 +29,15 @@
                         <h3 class="search-title">
                             <a href="#" class="blue">{{course.name}}</a>
                         </h3>
+                        <div v-for="teacher in teachers.filter(t=>{return t.id===course.teacherId})" class="profile-activity clearfix">
+                            <div>
+                                <img v-show="!teacher.image" class="pull-left" src="/ace/assets/images/avatars/avatar5.png">
+                                <img v-show="teacher.image" class="pull-left" v-bind:src="teacher.image">
+                                <a class="user" href="#"> {{teacher.name}} </a>
+                                <br>
+                                {{teacher.position}}
+                            </div>
+                        </div>
                         <p>
                             <span class="blue bolder bigger-150">{{course.price}}&nbsp;<i class="fa fa-rmb"></i></span>
                         </p>
@@ -150,7 +159,11 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">讲师</label>
                                 <div class="col-sm-10">
-                                    <input v-model="course.teacherId" class="form-control">
+                                    <select v-model="course.teacherId" class="form-control">
+                                        <option v-for="o in teachers" v-bind:value="o.id">
+                                            {{o.name}}
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
                         </form>
@@ -236,6 +249,7 @@
             let self = this;
             self.$refs.pagination.size = 5;
             self.allCategory();
+            self.allTeacher();
             self.list(1);
             // sidebar激活样式方法一
             // this.$parent.activeSidebar("business-course-sidebar");
@@ -438,12 +452,29 @@
                     }
                 });
             },
-
+            /**
+             * 讲师列表查询
+             */
+            allTeacher() {
+                let self = this;
+                Loading.show();
+                self.$ajax.post(process.env.VUE_APP_SERVER + '/business/admin/teacher/all').then((response) => {
+                    Loading.hide();
+                    let resp = response.data;
+                    self.teachers = resp.content;
+                })
+            }
         }
     }
 </script>
 <style scoped>
     caption h3 {
         font-size: 20px;
+    }
+
+    @media (max-width: 1199px) {
+        .caption h3 {
+            font-size: 16px;
+        }
     }
 </style>
