@@ -16,6 +16,13 @@ spring:
         predicates[0]:
           name: Path
           args[0]: /business/**
+      routes[2]:
+        id: file
+#        uri: http://127.0.0.1:9002
+        uri: lb://file
+        predicates[0]:
+          name: Path
+          args[0]: /file/**
 server:
   port: 9000
 eureka:
